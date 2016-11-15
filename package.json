@@ -1,0 +1,13 @@
+{
+  "name": "node-dash",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "3.x.x",
+    "ejs": ">= 0.0.0",
+    "ejs-locals": ">= 0.0.0"
+  },
+  "scripts": {
+    "start" : "node app.js",
+    "preinstall": "npm install ./node-dash "
+  }
+}
