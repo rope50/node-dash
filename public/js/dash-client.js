@@ -23,7 +23,7 @@ DashClient = function(videoData, container, callback){
     this.callback();
 };
 
-DashMerken.prototype.onBufferStart = function(){
+DashClient.prototype.onBufferStart = function(){
   if(++this.bufferCounter === 2){//(this.videos.length + this.audios.length)){
     console.log('The video buffer is ready');
     this.currentAudioRep = this.audioR[0].$.id;
@@ -46,7 +46,7 @@ DashMerken.prototype.onBufferStart = function(){
 };
 
 //CREATE <datalist> element for changes anotation inside video
-DashMerken.prototype.setTicks = function(){
+DashClient.prototype.setTicks = function(){
   var datalist = document.createElement('datalist');
   datalist.id = 'buffering-ticks';
   $(datalist).html(this.ticks.map(function(tick){ return '<option>'+tick+'</option>'; }).join(''));
@@ -55,7 +55,7 @@ DashMerken.prototype.setTicks = function(){
 };
 
 //initialize events inside the video application
-DashMerken.prototype.setEvents = function(){
+DashClient.prototype.setEvents = function(){
   var self = this;
   /* Trigger when the sequence is ready for starts its reproduction*/
   $(this.el).on('bufferReady', function(){   
@@ -198,7 +198,7 @@ DashMerken.prototype.setEvents = function(){
   }
 };
 
-DashMerken.prototype.startLoadingBar = function(duration){
+DashClient.prototype.startLoadingBar = function(duration){
   var progressEl = $(this.el).find('.current-loading');
   var progress = 0;
   var INTERVAL = 25;
@@ -217,7 +217,7 @@ DashMerken.prototype.startLoadingBar = function(duration){
 }
 
 //time update listener
-DashMerken.prototype.onTimeUpdate = function(currentTime){
+DashClient.prototype.onTimeUpdate = function(currentTime){
   //console.log(currentTime);
   $(this.el).find('input').val(currentTime);
   var minutes = Math.floor(currentTime / 60);
@@ -259,7 +259,7 @@ DashMerken.prototype.onTimeUpdate = function(currentTime){
   }
 }
 //VIDEO SEQUENCE PARSER
-DashMerken.prototype.getSequence = function(callback){
+DashClient.prototype.getSequence = function(callback){
   var self = this;
   var videoSequence = this.sequence.split(';');
   if(this.a_sequence)
@@ -328,7 +328,7 @@ DashMerken.prototype.getSequence = function(callback){
 };
 
 
-DashMerken.prototype.getSequenceByUID = function(UID){
+DashClient.prototype.getSequenceByUID = function(UID){
   for(var i in this.videoSequence){
     if(UID === this.videoSequence[i].uid)
       return this.videoSequence[i];
@@ -340,7 +340,7 @@ DashMerken.prototype.getSequenceByUID = function(UID){
   return false;
 }
 
-DashMerken.prototype.getMediaByUID = function(UID){
+DashClient.prototype.getMediaByUID = function(UID){
   for(var i in this.videos){
     if(UID === this.videos[i].id)
       return this.videos[i];
@@ -352,7 +352,7 @@ DashMerken.prototype.getMediaByUID = function(UID){
   return false;
 }
 //MEDIA RESOURCE INITIALIZACION
-DashMerken.prototype.getMediaInitialization = function(mediaD, callback){
+DashClient.prototype.getMediaInitialization = function(mediaD, callback){
   var self = this;
   var range = mediaD.SegmentBase[0].Initialization[0].$.range;
   var url = mediaD.BaseURL[0]._;
@@ -371,7 +371,7 @@ DashMerken.prototype.getMediaInitialization = function(mediaD, callback){
 }
 
 //XHR FUNCTION FOR GET RESOURCES CHUNKS
-DashMerken.prototype.getVideoSegmentation = function(mediaD, callback){
+DashClient.prototype.getVideoSegmentation = function(mediaD, callback){
   var first = false;
 
   if(typeof(callback) !== 'function')
@@ -405,7 +405,7 @@ DashMerken.prototype.getVideoSegmentation = function(mediaD, callback){
   xhr.send();
 }
 
-DashMerken.prototype.getAudioSegmentation = function(mediaD, callback){
+DashClient.prototype.getAudioSegmentation = function(mediaD, callback){
   var first = false;
 
   if(typeof(callback) !== 'function')
@@ -439,7 +439,7 @@ DashMerken.prototype.getAudioSegmentation = function(mediaD, callback){
   xhr.send();
 }
 /* Creates audio and video elements for sequences */
-DashMerken.prototype.buildSequence = function(){
+DashClient.prototype.buildSequence = function(){
   this.videoR = [];
   this.audioR = [];
   var videoSequence = this.videoSequence;
@@ -477,7 +477,7 @@ DashMerken.prototype.buildSequence = function(){
   }
 };
 
-DashMerken.prototype.getRepresentationById =  function(id){
+DashClient.prototype.getRepresentationById =  function(id){
   var videoDataArr = this.videosData;
   for(var i in videoDataArr){
     if(videoDataArr[i].$.id === id)
@@ -491,12 +491,12 @@ DashMerken.prototype.getRepresentationById =  function(id){
   return false;
 };
 
-DashMerken.prototype.addMediaResource = function(mediaD){
+DashClient.prototype.addMediaResource = function(mediaD){
   this.mediaResources.push(mediaD);
   return mediaD;
 };
 
-DashMerken.prototype.verifyMediaOnSources =  function(id){
+DashClient.prototype.verifyMediaOnSources =  function(id){
   for(var i in this.mediaResources){
     if(id === this.mediaResources[i].$.id)
       return true
@@ -504,7 +504,7 @@ DashMerken.prototype.verifyMediaOnSources =  function(id){
   return false;
 }
 
-DashMerken.prototype.getMediaData = function(callback){
+DashClient.prototype.getMediaData = function(callback){
   var self = this;
   var url = "/dash/youtube/data/"+this.videoID;
   $.ajax({
@@ -524,7 +524,7 @@ DashMerken.prototype.getMediaData = function(callback){
   });
 };
 
-DashMerken.prototype.getMediaLength =  function(url, callback){
+DashClient.prototype.getMediaLength =  function(url, callback){
   $.ajax({
       method: 'HEAD',
       url: url,
@@ -535,7 +535,7 @@ DashMerken.prototype.getMediaLength =  function(url, callback){
   });
 };
 
-DashMerken.prototype.startBufferDownload = function(ms, type){
+DashClient.prototype.startBufferDownload = function(ms, type){
   var rep = type ==='audio' ? this.audioR[0] : this.videoR[0];
   var mimeCodec     = rep.mimeType+';codecs="'+rep.$.codecs+'"'; 
   var sourceBuffer  = ms.addSourceBuffer(mimeCodec);
@@ -618,7 +618,7 @@ DashMerken.prototype.startBufferDownload = function(ms, type){
 };
 
 //PARSING RESOURCE HEADER INFORMATION
-DashMerken.prototype.parseSidx = function(ab, sidxStart) {
+DashClient.prototype.parseSidx = function(ab, sidxStart) {
   var d = new DataView(ab);
   var pos = 0;
 
@@ -682,7 +682,7 @@ DashMerken.prototype.parseSidx = function(ab, sidxStart) {
   }
 };
 
-DashMerken.prototype.getSidxs = function(callback){
+DashClient.prototype.getSidxs = function(callback){
   var self = this;
   var c = 0;
   var tm = self.videoR.length + self.audioR.length;
@@ -703,7 +703,7 @@ DashMerken.prototype.getSidxs = function(callback){
   }
 }
 
-DashMerken.prototype.buildHTML = function(container){
+DashClient.prototype.buildHTML = function(container){
   var el = document.createElement('div');
   el.id ="video-popup";
   var width = $(container).width()+30;
@@ -741,7 +741,7 @@ DashMerken.prototype.buildHTML = function(container){
   $(container).append(this.el);
 }
 
-DashMerken.prototype.init = function(){
+DashClient.prototype.init = function(){
   var self = this
   this.getSequence(function(vs,as, ticks){
    // console.log('SEQUENCE', sequence)
@@ -768,14 +768,14 @@ DashMerken.prototype.init = function(){
 
 
 //MAIN EVENTS
-DashMerken.prototype.destroy = function(){
+DashClient.prototype.destroy = function(){
   console.log('DESTROYING DASH PLAYER', this);
   this.state = 'DESTROYED';
   this.video.src = "";
   this.audio.src = "";
 }
 
-DashMerken.prototype.play = function(){
+DashClient.prototype.play = function(){
   if(this.state === 'STOPED'){ //prevent play on start when there are buffering
     this.stop();
   }
@@ -792,14 +792,14 @@ DashMerken.prototype.play = function(){
   }
 };
 
-DashMerken.prototype.pause = function(){
+DashClient.prototype.pause = function(){
   $(this.el).find('.pause').hide();
   $(this.el).find('.play').show();
   this.video.pause();
   this.audio.pause();
   this.state = "PAUSED";
 };
-DashMerken.prototype.stop = function(){  
+DashClient.prototype.stop = function(){  
   $(this.el).find('.pause').hide();
   $(this.el).find('.play').show();
   $(this.el).find('.loading-bar').hide();
@@ -813,12 +813,12 @@ DashMerken.prototype.stop = function(){
   this.state = "STOPED";
 };
 
-DashMerken.prototype.setCurrentTime = function(currentTime){
+DashClient.prototype.setCurrentTime = function(currentTime){
   this.video.currentTime = currentTime;
   this.audio.currentTime = currentTime;
 }
 
-DashMerken.prototype.setVolume = function(volume){
+DashClient.prototype.setVolume = function(volume){
   this.volume;
   this.audios.map(function(audio){ audio.volume = volume; });
 };
